@@ -1,0 +1,103 @@
+{
+  "info": {
+    "_postman_id": "61be4639-6d9f-425f-9128-6c37ac9510db",
+    "name": "FX Rates API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33036568"
+  },
+  "item": [
+    {
+      "name": "Check API",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get FX Rates",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://open.er-api.com/v6/latest/USD",
+          "protocol": "https",
+          "host": [
+            "open",
+            "er-api",
+            "com"
+          ],
+          "path": [
+            "v6",
+            "latest",
+            "USD"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get FX Rates - Invalid Currency",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"API result is error\", function () {\r\n    pm.expect(response.result).to.eql(\"error\");\r\n});\r\n\r\npm.test(\"Error type is unsupported-code\", function () {\r\n    pm.expect(response[\"error-type\"]).to.eql(\"unsupported-code\");\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v6/latest/XXX",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v6",
+            "latest",
+            "XXX"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get FX Rates - Data Driven (CSV)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const response = pm.response.json();\r\n\r\npm.test(\"Response base currency matches requested currency\", function () {\r\n    const requestedCurrency =\r\n        pm.iterationData.get(\"baseCurrency\") ||\r\n        pm.variables.get(\"baseCurrency\");\r\n\r\n    pm.expect(response.base_code).to.eql(requestedCurrency);\r\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v6/latest/{{baseCurrency}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v6",
+            "latest",
+            "{{baseCurrency}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
